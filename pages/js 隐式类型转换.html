@@ -1,0 +1,844 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>js 隐式类型转换</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+}
+
+.simple-table-header {
+	background: rgb(247, 246, 243);
+	color: black;
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(145, 145, 142, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(187, 132, 108, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(215, 129, 58, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 148, 51, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(108, 155, 125, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(91, 151, 189, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(167, 130, 195, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(205, 116, 159, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(225, 111, 100, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(145, 145, 142, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(187, 132, 108, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(215, 129, 58, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 148, 51, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(108, 155, 125, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(91, 151, 189, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(167, 130, 195, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(205, 116, 159, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(225, 111, 100, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="8b2e2c90-ba2c-4690-b322-946e0b116544" class="page sans"><header><h1 class="page-title">js 隐式类型转换</h1></header><div class="page-body"><h2 id="25364fde-356f-44f6-877f-b462e4a7d21f" class="">xxx == yyy 对比时，隐士转换</h2><p id="ec5bc77b-6b2f-4a99-9296-649ce2d56773" class="">
+</p><h3 id="30b21797-bb6a-4181-adf9-9d7c4ed63a61" class="">例子</h3><pre id="395e80dd-6968-4023-b63f-3ee49ceb49a1" class="code"><code>终结题目： 
+定义a变量， 满足 a == 1 &amp;&amp; a ==2 &amp;&amp; a == 3 返回 true ？？？
+
+题目1: 
+false == &#x27;0&#x27; 
+
+题目2：
+false == 0 和 false == &#x27;0&#x27; 的区别？
+
+题目3.
+String(&#x27;123&#x27;) == 123  为什么等于 true
+
+题目4.
+new String(&#x27;123&#x27;) == 123 与 String(&#x27;123&#x27;) == 123 都是true，他们的区别是什么？
+
+题目5.
+new String(&#x27;123&#x27;) == &#x27;123&#x27; 它的答案是 true，它真的是通过对比什么获取的 true
+
+题目6.
+[1,2,3] + 4 等于多少??
+
+题目7.
+false == [0] 等于 true， 为什么是true
+true == [1] 等于 true， 为什么是true
+true == [2] 等于什么？ </code></pre><p id="a85e8cea-f1c1-40a0-9359-9b4861547a73" class="">
+</p><h3 id="35a550cd-5b50-489b-b2da-8545748a389a" class="">隐士转换过程</h3><blockquote id="c0114a9a-7e29-43aa-b692-ba760c0756ef" class="">toPrimity 先 valueOf() 再 toString()</blockquote><blockquote id="e13c0cfc-209a-409c-af94-6183beebc327" class="">Date 是 先调用 toString() 再 valueOf()</blockquote><ul id="74d7d284-f507-4bd3-98cc-7c3a611b0e20" class="bulleted-list"><li style="list-style-type:disc">两边类型相同时<ul id="4a09739f-e2fc-4db5-a4c0-659f34ab7e79" class="bulleted-list"><li style="list-style-type:circle"><strong>NaN == NaN: 返回 false， 特殊例子</strong></li></ul><ul id="5a9b9d26-6fc9-4589-9a82-f874a8085133" class="bulleted-list"><li style="list-style-type:circle">引用类型 == 引用类型<ul id="c0bb4507-38f1-4292-a453-62885dde16c6" class="bulleted-list"><li style="list-style-type:square">两个<strong>引用类型对比时，比较内存地址</strong>， 如果相同就相同</li></ul></li></ul></li></ul><ul id="24bc535f-fcf5-43c4-8ce0-112b70b9c0d4" class="bulleted-list"><li style="list-style-type:disc">两边类型不同时<ul id="9a81c301-c933-44a4-8f56-fbbe285d1a69" class="bulleted-list"><li style="list-style-type:circle">（null || undefined || NaN）==  (Object || String || Number || Boolean ): <strong>不做隐式转换</strong><ul id="cc17758d-d744-4ca5-a5a2-a8e2ad5d0ac5" class="toggle"><li><details open=""><summary>例子</summary><pre id="4f7db60e-17ff-4fdc-a90e-8f2137b6c357" class="code"><code>// 无转换过程， 直接比较
+null == 0 // false
+undefined == 0  // false
+NaN == 0 // false</code></pre></details></li></ul></li></ul><ul id="c292610e-575e-4017-9f81-54dcc1614e5a" class="bulleted-list"><li style="list-style-type:circle">Boolean == ? : <strong>把 Boolean 转成数值（0 或 1）</strong><ul id="87c6cac8-ec14-4673-95b0-c52a8b92afd3" class="toggle"><li><details open=""><summary>例子</summary><pre id="acfd3412-930e-486b-8eff-dd57b77b5ecd" class="code"><code>true == 32 // 转换过程： 1 == 32
+true == 1   // 转换过程： 1 == 1
+false == 0 // 转换过程： 0 == 0</code></pre></details></li></ul></li></ul><ul id="134bae38-8b90-46c0-b4b3-2c34ae1d1ac3" class="bulleted-list"><li style="list-style-type:circle">String == Number  : <strong>字符转成数值</strong><ul id="4305757c-04a5-430a-a786-2a1bd909502c" class="toggle"><li><details open=""><summary>例子</summary><pre id="7dbccc80-ce7d-4a44-be86-3c4b73980e54" class="code"><code>1 == &#x27;123&#x27; // 转换过程： 1 == 123
+123 == &#x27;123&#x27; // 转换过程： 123 == 123
+0 == &#x27;0&#x27; // 0 == 0
+1 == &#x27;1&#x27; //  1 == 1</code></pre></details></li></ul></li></ul><ul id="fef970b2-4c9f-4008-82e9-b0d999e9ff5f" class="bulleted-list"><li style="list-style-type:circle">Object == (Number||String): 对象返回默认值，<strong>通过 先valueOf，再 toString</strong> 将对象转成原始值(Number||String)， <strong>如果转换不了就报错</strong><p id="9ad0f295-1c00-4b48-a5a7-ddb01da1a071" class="">简写个伪代码： !Number(引用类型.valueOf())?.toString()</p><ol type="1" id="5c065b34-3a7a-4244-ab99-ad8cbebc1088" class="numbered-list" start="1"><li>引用类型调用 valueOf   </li></ol><ol type="1" id="fb54d363-d833-4964-8bca-ff2c7b43c587" class="numbered-list" start="2"><li>把 （1）的值转成数值   </li></ol><ol type="1" id="ad3bc67c-0960-430a-9633-e8bfb81e2d41" class="numbered-list" start="3"><li>如果（2）结果是数值，就用数值比较；  </li></ol><ol type="1" id="2f6a5ece-919e-43a0-910b-a9e4599391f2" class="numbered-list" start="4"><li>如果（2）结果不是数值， 把（1）结果使用 toString 转换; </li></ol><ol type="1" id="bb440d98-b99d-411e-81e7-97763e0fbc91" class="numbered-list" start="5"><li>如果（4）toString 转换不了，直接报错</li></ol><ul id="a9eb5846-02b4-45a8-8113-614801246764" class="toggle"><li><details open=""><summary>例子</summary><pre id="d32ed780-cb49-4920-a06f-1a23e5dadb9e" class="code"><code>//4. 对象转换不是数值
+var a = {}
+// 转换过程： a.valueOf() =&gt; Number(a.valueOf()) =&gt; 返回是数值就停止 =&gt; (a.valueOf()).toString()
+console.log(a == 1) // a.valueOf().toString() === 1
+
+// 3. 对象转换数值
+var b = new String(123)
+// 转换过程： b.valueOf() =&gt; 是number =&gt; b.valueOf() == 123 
+b === 123 // b.valueOf() === 123
+
+// 3. 对象转成数值， 再与字符对比
+var b = new String(&#x27;123&#x27;)    // 使用 new String 是为了迷惑以为用 string 对比，其实是number对比得到 true
+b == &#x27;123&#x27;
+// (A). b 转换过程: ：  Number(b.valueOf()) =&gt; 是 number:  b.valueOf() =&gt; 123
+// (B). &#x27;123&#x27; 转换过程： 再流程 （A） 得到 123:      123 == &#x27;123&#x27;
+// (C). 回到 String == Number 的类型对比，隐士转换得到 =&gt;  123 == 123 // true
+</code></pre></details></li></ul></li></ul></li></ul><p id="b31b02b6-2d14-4526-aeab-291c0c20826f" class="">
+</p><h3 id="8d9ad2d3-ad7b-4cf5-a0d5-c486aaf28018" class="">答案讲解</h3><pre id="a3090cf8-b83f-43e0-a22f-c94fa08f8219" class="code"><code>题目1: 
+false == &#x27;0&#x27;
+// 1. false =&gt; 1  得到 0 == &#x27;0&#x27;
+// 2. 进入 Number == String 隐士转换
+// 3. 0 == &#x27;0&#x27; =&gt; 得到  0 == 0 (&#x27;0&#x27; =&gt; 0)
+// 4. 得到 true
+
+题目2：
+false == 0 和 false == &#x27;0&#x27; 的区别？
+
+
+题目3.
+String(&#x27;123&#x27;) == 123 // 分解一下
+var c = String(&#x27;123&#x27;) // c 是 字符类型
+// Number ==  String 隐士转换得到 =&gt; Number == Number
+// 具体是  &#x27;123&#x27;==123 =变成=&gt; 123 == 123
+
+
+题目4.
+new String(&#x27;123&#x27;) == 123 与 String(&#x27;123&#x27;) == 123 都是true
+问题： 他们的区别是什么？
+
+new String(&#x27;123&#x27;) == &#x27;123&#x27; 分解一下
+var b = new String(&#x27;123&#x27;)    // 使用 new String 是为了迷惑以为用 string 对比，其实是number对比得到 true
+b == &#x27;123&#x27; // b 是 Object 引用类型
+// (A). b 转换过程: ：  Number(b.valueOf()) =&gt; 是 number:  b.valueOf() =&gt; 123
+// (B). &#x27;123&#x27; 转换过程： 再流程 （A） 得到 123:      123 == &#x27;123&#x27;
+// (C). 回到 String == Number 的类型对比，隐士转换得到 =&gt;  123 == 123 // true
+
+
+
+题目5.
+new String(&#x27;123&#x27;) == &#x27;123&#x27; 
+问题： 它的答案是 true，它真的是通过对比字符获取的 true 吗？
+
+
+题目6.
+[1,2,3] + 4 等于多少??
+var ary = [1, 2, 3]; ary + 4 = ？
+// 1.  ary 是引用类型， 使用 Object +  Number =&gt; ([1,2,3].valueOf()).toString() =&gt; &#x27;1,2,3&#x27;
+// 2. &#x27;1,2,3&#x27; + 4 变成 &#x27;1,2,34&#x27;</code></pre><p id="2fcd1611-5b49-48f2-b0be-ae43e48c528d" class="">
+</p><p id="ba3b8f32-e771-4ffe-8d4b-bdc2b5110ae1" class="">
+</p><p id="eb91ed47-6c5e-4dd5-b081-0afdb8634dec" class="">
+</p><h2 id="1dc22383-e46f-4b81-abba-0cd5511df622" class="">xxx + yyy  进行隐士转换时</h2><h3 id="24fecbb6-5703-4820-8ec6-68b5f2017ed2" class="">例子</h3><pre id="f5deee6a-0192-45cf-b7eb-e08db0495c30" class="code"><code>题目1.
+null + false // 结果是多少
+null + true // 结果是多少
+
+
+题目2. 
+true + false // 结果是多少
+false + false // 结果是多少
+true + true // 结果是多少
+undefined + 1 // NaN
+null + 1 // 1
+
+题目3.
+[1, 2, 3] + 4
+
+题目4.
+4 + [1,2,3]
+
+题目5.
+{} + [] // 0 
+console.log({} + []) // &#x27;[object Object]&#x27;
+[] + {} // &#x27;[object Object]&#x27;
+[] + [] // &#x27;&#x27;
+{} + {} // &#x27;[object Object][object Object]&#x27;
+
+
+题目6.
+{} - [] // -0
+[] - {} // NaN
+
+题目7
+
+[] - [] // 0
+{} - {} // NaN
+
+题目7.
+new Date(&#x27;2022&#x27;) - new Date() // 为什么获取数值
+new Date(&#x27;2022&#x27;) + new Date() // 为什么得到字符</code></pre><p id="be3db3fd-1f64-4323-a3ed-d2b84d7fbeff" class="">
+</p><h3 id="eb45b24e-28af-42ab-aaca-c230d8235382" class="">隐士转换过程</h3><blockquote id="edfd0f7c-256d-4e01-8488-cea0df58ec4c" class="">toPrimity 先 valueOf() 再 toString()</blockquote><blockquote id="ea1fda4a-9426-4e9b-962d-168aace43b4b" class="">Date 是 先调用 toString() 再 valueOf()</blockquote><ol type="1" id="3d994ba7-b7ea-439a-aaf9-f99d0bba736a" class="numbered-list" start="1"><li>{...} + ??:   不管前面的大括号，认为其是块级语法；<ul id="77b7fe9a-61e0-4329-8bb2-93d2ba17ff34" class="toggle"><li><details open=""><summary>例子</summary><pre id="54648191-b38c-44b7-a411-87de86b459e4" class="code"><code>{} + [] // 0 
+{a: 1} + [] // 0
+{a: 1} + [2] // 2
+
+new Date() + [3] // &#x27;Sun Dec 19 2021 18:34:34 GMT+0800 (中国标准时间)3&#x27;</code></pre></details></li></ul></li></ol><ol type="1" id="1b3e4d81-38e5-46d0-a1b3-c40e5f7b10d6" class="numbered-list" start="2"><li>Number + Number：  <strong>按照数值计算， 优先级高</strong></li></ol><ol type="1" id="12d4aeea-70ad-4fc4-9da8-2d469fd652ca" class="numbered-list" start="3"><li>String + Number :    <strong>Number 转成字符</strong>进行相加，<strong>优先级中</strong></li></ol><ol type="1" id="366e8b8f-0414-49d3-8e11-715a597c0c80" class="numbered-list" start="4"><li>不是 Number + 不是 String ，<strong>优先级低</strong><ol type="a" id="164fecdb-ddbe-45dd-9fb1-d079ab50da39" class="numbered-list" start="1"><li><strong>如果能转成数值， 使用数值相加</strong><ul id="a2603a38-9ac3-403d-b956-808432166c7e" class="toggle"><li><details open=""><summary>例子</summary><pre id="01e0c7fc-39ff-498f-8a33-5005afcb18ff" class="code"><code>true + false // 1
+true + true // 2
+false + false // 0
+2 + null // 2
+2 + undefined // NaN
+2 + true // 3
+
+undefined + 2 // &#x27;undefined2&#x27;
+null + 2 // &#x27;null2&#x27;</code></pre></details></li></ul></li></ol><ol type="a" id="6a8ec6da-2291-428f-9bc2-4a815861e493" class="numbered-list" start="2"><li>如果（1） 不成立， <strong>调用 ??.valueOf() 得到基础类型</strong>（Number||Sring||Boolean||null||undefined ）,进行处理</li></ol><ol type="a" id="15164de6-f355-4e1a-83bc-3a154c425fc0" class="numbered-list" start="3"><li>如何（2）不成立，<strong>调用 ??.toString() 得到基础类型</strong>（Number||Sring||Boolean||null||undefined ），进行处理</li></ol><ol type="a" id="f6db849f-55ea-447c-b2a4-08058b62edf9" class="numbered-list" start="4"><li>如果<strong>（3）不成立，抛出报错</strong></li></ol><p id="f4457222-fe9c-41ab-8580-03295fc20c87" class="">
+</p></li></ol><p id="325b98c7-876b-46ac-867c-41d8dd25215f" class="">
+</p><p id="db9aa7e0-7db5-4251-ac9b-535ba9281908" class="">
+</p><p id="2fe14f65-f0e7-495e-a9a0-3acccfeabf97" class="">
+</p><p id="8809c04c-6eb9-41cf-9578-a64ea45c98e5" class="">
+</p><h2 id="4898e4af-17c5-4f57-91d4-e34b03e5f40c" class="">xxx - yyy 隐士转换</h2><ul id="38b03db0-087a-4049-98c7-d0f105e2246d" class="bulleted-list"><li style="list-style-type:disc">数值类型： 直接相减</li></ul><ul id="ed01f6a8-d000-418a-a790-a5c1a3afbfff" class="bulleted-list"><li style="list-style-type:disc">引用类型<ol type="1" id="56bf1478-c9e0-48d2-9c81-314bd527d24a" class="numbered-list" start="1"><li>{...} - ??: 与加法一样，不管对象里的值，其被认为是块级元素<ul id="5e658afc-27a2-41bc-ae8e-bc0e7a87de39" class="toggle"><li><details open=""><summary>例子</summary><pre id="0ce10e75-500b-42c3-ad5e-72c4e313228a" class="code"><code>{} - [2] // -2
+{} - [] // -0</code></pre></details></li></ul></li></ol><ol type="1" id="f8120bdc-134a-46e5-95c0-a5542b5d3b08" class="numbered-list" start="2"><li>引用类型: 转成数值， 通过数值计算</li></ol></li></ul><p id="e184ecdd-6b6d-40fd-9cb9-322f7c5e0784" class="">
+</p><p id="efe0f357-c01d-4377-ba5d-89786877d248" class="">
+</p><h2 id="b998824d-373c-4e51-a1c2-0aff04136a80" class="">toPrimitive </h2><ul id="1a7630bc-1c87-41b8-9615-3e06fa4cdcfc" class="bulleted-list"><li style="list-style-type:disc">非基础类型通过 valueOf 转成基础类型, 如果不能就使用 toString 转换</li></ul><ul id="112db7f5-b2cb-49d9-b14d-2b62d23487ed" class="bulleted-list"><li style="list-style-type:disc">js基础类型: string number boolean null object function, 新增 symbol</li></ul><ul id="11c1fd9d-fc65-4487-9703-c2aa4c926aa5" class="bulleted-list"><li style="list-style-type:disc">Symbol.toPrimitive 把对象转换成为基础类型</li></ul><h3 id="3519ae49-8f6b-45de-8dea-39b082ca874f" class="">Symbol.toPrimitive </h3><p id="17dd3877-a101-43ca-9bd1-10a4e3418a93" class="">hint 值是3种: &quot;number&quot;、&quot;string&quot; 和 &quot;default&quot;</p><pre id="018ea4cf-3cec-4f98-9ade-ae17b6446023" class="code"><code>var object2 = {}
+console.log(`${object2}`); // &quot;[object Object]&quot;
+
+// object 转换被复写操作
+const object1 = {
+  [Symbol.toPrimitive](hint) {
+	console.log(&#x27;hint is :&#x27;, hint)
+    if (hint === &#x27;number&#x27;) {
+      return 42;
+    }
+  }
+};
+
+console.log(+object1); // expected output: 42
+console.log(`${object1}`); // string
+console.log(&#x27;&#x27; + object1);// default 
+console.log(object1+&#x27;&#x27;); // default
+console.log(!object1);
+console.log(!!object1);</code></pre><p id="6ec0e9ad-b293-4531-ac53-fc77fec86a18" class="">
+</p><p id="35f15efb-56b2-40f8-944f-7cd174cfda6a" class="">
+</p><h2 id="7257d46b-85ab-4866-bd27-49ae86a853a8" class="">字符比较</h2><blockquote id="d950d421-b5ee-4811-ae5e-67950e8225f8" class="">字符比较, 会使用首个字符的 ascII 位置进行比较</blockquote><pre id="9c0491f0-982e-4ef8-87a5-a68b1d834115" class="code"><code>&#x27;23&#x27; &lt; &#x27;3&#x27; // false
+
+&#x27;23&#x27;.charCodeAt() // 50
+&#x27;3&#x27;.charCodeAt() // 51</code></pre><p id="c30f65c2-a0c0-4bf4-bdaa-50d63585d853" class="">
+</p><h3 id="98e719fa-55e9-4bab-a260-42908fab3f7b" class="">sort() 排序</h3><blockquote id="7bb909e8-b319-479e-86c1-45b11ebbc5ea" class="">会先把数字转成字符进行比较</blockquote><pre id="8f3c0768-2901-462e-bd1c-0b29068f6f31" class="code"><code>// 数组排序
+[1, 10, 3, 100].sort() // [1, 10, 3, 100]
+
+// 正确排序方式
+[1, 10, 3, 100].sort((b,b)=&gt;{
+	if(a&lt;b){ return - 1}
+}) </code></pre><p id="e2b8f3e3-f1ab-47bc-af5d-77589948e61f" class="">
+</p><p id="1fb6a72a-381f-430f-9fce-de3b887f3f9b" class="">
+</p><p id="845cee16-3cfc-456f-b993-8741e8d87265" class="">
+</p><p id="e9434acb-56c5-46dc-8055-fbe541c16321" class="">
+</p><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="bbf9faea-3bf2-432e-be1b-35262da06186"><div style="font-size:1.5em"><span class="icon">👉</span></div><div style="width:100%">参考文章</div></figure><figure id="68419bab-cdb9-43b1-9a8d-5c2d4b7ee734"><a href="https://juejin.cn/post/6844903694039777288" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">掘金</div></div><div class="bookmark-href"><img src="https://lf3-cdn-tos.bytescm.com/obj/static/xitu_juejin_web//static/favicons/favicon-16x16.png" class="icon bookmark-icon"/>https://juejin.cn/post/6844903694039777288</div></div></a></figure><figure id="60043435-4f73-4b0d-8139-0edb38fe3690"><a href="https://zhuanlan.zhihu.com/p/38976424" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">js隐式转换相关知识</div><div class="bookmark-description">隐式转换比较是js中绕不过去的坎，就算有几年经验的工程师也很有可能对这块知识不够熟悉。就算你知道使用===比较从而避免踩坑，但是团队其它成员不一定知道有这样或那样的坑，有后端语言经验的人常常会形成一个思维误区：&quot;JS这门语言很简单，看看语法再找几个例子就能操作DOM，编写特效了&quot;。随着react、vue、html5等技术在项目中大规模使用，越来越多的项目中使用了大量的JS，甚至整个项目都用J...</div></div><div class="bookmark-href"><img src="https://static.zhihu.com/heifetz/favicon.ico" class="icon bookmark-icon"/>https://zhuanlan.zhihu.com/p/38976424</div></div><img src="https://pic1.zhimg.com/v2-a1dfc82f38ae096b1fd99a9693586f0c_b.jpg" class="bookmark-image"/></a></figure><figure id="ee631447-c1cb-4241-a4b6-5e9604a05aae"><a href="https://juejin.cn/post/6844903557968166926" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">你所忽略的js隐式转换 - 掘金</div><div class="bookmark-description">你有没有在面试中遇到特别奇葩的js隐形转换的面试题，第一反应是怎么会是这样呢？难以自信，js到底是怎么去计算得到结果，你是否有深入去了解其原理呢？下面将深入讲解其实现原理。 其实这篇文章初稿三个月前就写好了，在我读一些源码库时，遇到了这些基础知识，想归档整理下，就有了这篇文章。...</div></div><div class="bookmark-href"><img src="https://lf3-cdn-tos.bytescm.com/obj/static/xitu_juejin_web//static/favicons/favicon-16x16.png" class="icon bookmark-icon"/>https://juejin.cn/post/6844903557968166926</div></div></a></figure><figure id="1f08ea0d-517e-412d-a894-004368bbaa3f"><a href="https://segmentfault.com/a/1190000019464533" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">掌握 Javascript 类型转换：隐式转换救救孩子</div><div class="bookmark-description">在上一篇中我们聊过了 JS 类型转换的规则和我发现的一些常见书籍中关于类型转换的一些小错误，当碰到显示类型转换的时候大家可以按照这些规则去拆解出答案。但 JS 中存在一些很隐晦的隐式类型转换，这一篇就来谈下我对隐式类型转换的一些总结。 关于 JS 类型转换规则请看上一篇的内容：掌握 JS 类型转换：从规则开始 什么是隐式类型转换呢？顾名思义就是有时候你感觉不到这是类型转换但是实际上类型转换已经发生了。所以这个 &quot;隐式&quot; 取决于我们的理解和经验，如果你看不出来那就是隐式的。 下面按照我自己对于隐式转换的分类来逐个聊聊吧。 var a = &#x27;123&#x27;; var b = +a; console.log(b); // 123 先来看看 + 或 - 在一个类型值前面，这里会执行 ToNumber 类型转换。如果是 - 在前面的话，还会将结果的符号取反，如：-&quot;123&quot; 的结果是 -123。并且如果原类型是对象的话也是遵循 ToNumber 的转换规则，大家可以自己试试，这里就不再举多余的例子了。 var a = &#x27;123&#x27;; var b = true; console.log(a - b); //</div></div><div class="bookmark-href"><img src="https://cdn.segmentfault.com/r-f577af1c/favicon.ico" class="icon bookmark-icon"/>https://segmentfault.com/a/1190000019464533</div></div><img src="https://cdn.segmentfault.com/r-f577af1c/touch-icon.png" class="bookmark-image"/></a></figure><p id="eb7ad42e-0ec4-4e3d-be3d-d297130d6349" class="">
+</p><p id="278f8fa4-5ded-4964-babc-df85914e823f" class="">
+</p></div></article></body></html>
